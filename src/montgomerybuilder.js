@@ -6,11 +6,13 @@ const AsmBuilder = require("./asmbuilder");
 // https://hackmd.io/@zkteam/modular_multiplication#Benchmarks
 //
 
-
 module.exports.buildMul = buildMul;
+module.exports.buildMul_no_adx = buildMul_no_adx;
 module.exports.buildSquare = buildSquare;
+module.exports.buildSquare_no_adx = buildSquare_no_adx;
 module.exports.buildMul1 = buildMul1;
 module.exports.buildFromMontgomery = buildFromMontgomery;
+module.exports.buildFromMontgomery_no_adx = buildFromMontgomery_no_adx
 
 function templateMontgomery(fn, q, upperLoop) {
 
@@ -311,6 +313,154 @@ function buildFromMontgomery(fn, q) {
     });
 }
 
+// no adx assembler
+
+function templateMontgomery_no_adx(fn, q, round) {
+
+    const n64 = Math.floor((q.bitLength() - 1) / 64)+1;
+    const canOptimizeConsensys = q.shiftRight((n64-1)*64).leq( bigInt.one.shiftLeft(64).minus(1).shiftRight(1).minus(1) );
+    const c = new AsmBuilder(fn, 4 + n64 + 1 + (canOptimizeConsensys ? 0 : 1));
+    const t = 4;
+
+    const params = {q, n64, t, canOptimizeConsensys};
+
+
+    let r0, r1, r2;
+    function setR(step) {
+        if ((step % 3) == 0) {
+            r0 = "r8";
+            r1 = "r9";
+            r2 = "r10";
+        } else if ((step % 3) == 1) {
+            r0 = "r9";
+            r1 = "r10";
+            r2 = "r8";
+        } else {
+            r0 = "r10";
+            r1 = "r8";
+            r2 = "r9";
+        }
+    }
+
+    c.op("mov", "rbp", "rsp")
+    c.op("sub","rsp", "" + n64 * 8);
+    c.op("mov","rcx","rdx");
+    c.op("mov","r11", "[ np ]");
+    c.op("xor","r8","r8");
+    c.op("xor","r9","r9");
+    c.op("xor","r10","r10");
+    // Main loop
+    for (let i=0; i < n64 * 2; i++) {
+        setR(i);
+        round(c, params, i, r0, r1, r2);
+        for (let j = i - 1; j >= 0; j--) { // All ms
+            if (((i - j) < n64) && (j < n64)) {
+                c.op("mov", "rax", "[rsp + " + j * 8 + "]");
+                c.op("mul", "qword [q + " + (i - j) * 8 + "]")
+                c.op("add", r0, "rax")
+                c.op("adc", r1, "rdx")
+                c.op("adc", r2, "0x0")
+            }
+        } // ms
+        if (i < n64) {
+            c.op("mov", "rax", r0)
+            c.op("mul", "r11")
+            c.op("mov", "[rsp + " + i * 8 + "]", "rax")
+            c.op("mul", "qword [q]")
+            c.op("add", r0, "rax")
+            c.op("adc", r1, "rdx")
+            c.op("adc", r2, "0x0")
+        } else {
+            c.op("mov", "[rdi + " + (i - n64) * 8 + "]", r0)
+            c.op("xor", r0, r0)
+        }
+    } // Main Loop
+
+    c.op("test", r1, r1)
+    c.code.push("jnz " +  fn + "_mulM_sq")
+    c.code.push("; Compare with q")
+    for (let i=0; i < n64; i++) {
+        c.op("mov", "rax", "[rdi + " + (n64 - i - 1) * 8 + "]")
+        c.op("cmp", "rax", "[q + " + (n64 - i -1) * 8 + "]")
+        c.code.push("jc " + fn + "_mulM_done")          // q is bigget so done.
+        c.code.push("jnz " + fn + "_mulM_sq")           //  q is lower
+    }
+
+    c.code.push("; If equal substract q")
+
+    c.code.push(fn + "_mulM_sq:");
+
+    for (let i=0; i < n64; i++) {
+        c.op("mov", "rax", "[q + " + i * 8 + "]")
+        if (i == 0) {
+            c.op("sub", "[rdi + " + i * 8 + "]", "rax")
+        } else {
+            c.op("sbb", "[rdi + " + i * 8 + "]", "rax")
+        }
+    }
+
+    c.code.push(fn + "_mulM_done:");
+
+    c.code.push("; Deallocate the reserved space on the stack")
+    c.op("mov", "rsp", "rbp")
+
+    c.flushWr(true);
+
+    return c.getCode();
+
+}
+
+function buildMul_no_adx(fn, q) {
+    return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
+        const {t, n64, canOptimizeConsensys} = params;
+        // Same Digit
+        for (let o1 = Math.max(0, i - n64+1); (o1 <= i) && (o1 < n64); o1++) {
+            const o2= i-o1;
+            c.op("mov", "rax", "[rsi + " + 8 * o1 + "]")
+            c.op("mul", "qword [rcx + " + 8 * o2 + "]")
+            c.op("add", r0, "rax")
+            c.op("adc", r1, "rdx")
+            c.op("adc", r2, "0x0")
+        } // Same digit
+    });
+}
+
+function buildSquare_no_adx(fn, q) {
+    return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
+        const {t, n64, canOptimizeConsensys} = params;
+        // Same Digit
+        for (let o1 = Math.max(0, i - n64 +1); (o1 < ((i+1) >> 1) ) && (o1 < n64); o1++) {
+            const o2= i-o1;
+            c.op("mov", "rax", "[rsi + "  + 8 * o1 + "]")
+            c.op("mul", "qword [rsi + " + 8 * o2 + "]")
+            c.op("add", r0, "rax")
+            c.op("adc", r1, "rdx")
+            c.op("adc", r2, "0x0")
+            c.op("add", r0, "rax")
+            c.op("adc", r1, "rdx")
+            c.op("adc", r2, "0x0")
+        } // Same digit
+        if (i % 2 == 0) {
+            c.op("mov", "rax", "[rsi + " + 8 * (i/2) + "]")
+            c.op("mul", "rax")
+            c.op("add", r0, "rax")
+            c.op("adc", r1, "rdx")
+            c.op("adc", r2, "0x0")
+        }
+    });
+}
+
+function buildFromMontgomery_no_adx(fn, q) {
+    return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
+        const {t, n64, canOptimizeConsensys} = params;
+        // Same Digit
+        if (i<n64) {
+            c.op("add", r0, "[rsi + " + 8 * i + "]")
+            c.op("adc", r1, "0x0")
+            c.op("adc", r2, "0x0")
+        } // Same digit
+    });
+}
 
 // const code = buildMontgomeryMul("Fr_rawMul", bigInt("21888242871839275222246405745257275088548364400416034343698204186575808495617"));
 // const code = buildMontgomeryMul("Fr_rawMul", bigInt("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16));
