@@ -20,6 +20,11 @@ module.exports = class RegManager {
             "mov": ["O", "I"],
             "mulx": ["OR","OR", "I"],
             "xor": ["IO", "O"],
+            "push": ["O"],
+            "pop": ["I"],
+            "mul": ["IO"],
+            "add": ["IOR", "I"],
+            "adc": ["IOR", "I"],
         };
 
         this.code = [];

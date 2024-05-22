@@ -1,8 +1,14 @@
 
-<%= montgomeryBuilder.buildMul(name+"_rawMMul", q) %>
-<%= montgomeryBuilder.buildSquare(name+"_rawMSquare", q) %>
+<%if (no_adx) { %>
+   <%= montgomeryBuilder.buildMul_no_adx(name+"_rawMMul", q) %>
+   <%= montgomeryBuilder.buildFromMontgomery_no_adx(name+"_rawFromMontgomery", q) %>
+   <%= montgomeryBuilder.buildSquare_no_adx(name+"_rawMSquare", q) %>
+<% } else{ %>
+   <%= montgomeryBuilder.buildMul(name+"_rawMMul", q) %>
+   <%= montgomeryBuilder.buildFromMontgomery(name+"_rawFromMontgomery", q) %>
+   <%= montgomeryBuilder.buildSquare(name+"_rawMSquare", q) %>
+<% } %>
 <%= montgomeryBuilder.buildMul1(name+"_rawMMul1", q) %>
-<%= montgomeryBuilder.buildFromMontgomery(name+"_rawFromMontgomery", q) %>
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawToMontgomery

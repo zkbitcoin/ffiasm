@@ -54,7 +54,7 @@
         section .text
 <%- include('utils.asm.ejs'); %>
 <%- include('copy.asm.ejs'); %>
-<%- include('montgomery.asm.ejs'); %>
+<%- include('montgomery.asm.ejs', {no_adx:no_adx}); %>
 <%- include('add.asm.ejs'); %>
 <%- include('sub.asm.ejs'); %>
 <%- include('neg.asm.ejs'); %>
