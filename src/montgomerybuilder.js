@@ -342,8 +342,10 @@ function templateMontgomery_no_adx(fn, q, round) {
         }
     }
 
-    c.op("mov", "rbp", "rsp")
+    //c.op("mov", "rbp", "rsp")
+
     c.op("sub","rsp", "" + n64 * 8);
+
     c.op("mov","rcx","rdx");
     c.op("mov","r11", "[ np ]");
     c.op("xor","r8","r8");
@@ -356,34 +358,34 @@ function templateMontgomery_no_adx(fn, q, round) {
         for (let j = i - 1; j >= 0; j--) { // All ms
             if (((i - j) < n64) && (j < n64)) {
                 c.op("mov", "rax", "[rsp + " + j * 8 + "]");
-                c.op("mul", "qword [q + " + (i - j) * 8 + "]")
-                c.op("add", r0, "rax")
-                c.op("adc", r1, "rdx")
-                c.op("adc", r2, "0x0")
+                c.op("mul", "qword [q + " + (i - j) * 8 + "]");
+                c.op("add", r0, "rax");
+                c.op("adc", r1, "rdx");
+                c.op("adc", r2, "0x0");
             }
         } // ms
         if (i < n64) {
-            c.op("mov", "rax", r0)
-            c.op("mul", "r11")
-            c.op("mov", "[rsp + " + i * 8 + "]", "rax")
-            c.op("mul", "qword [q]")
-            c.op("add", r0, "rax")
-            c.op("adc", r1, "rdx")
-            c.op("adc", r2, "0x0")
+            c.op("mov", "rax", r0);
+            c.op("mul", "r11");
+            c.op("mov", "[rsp + " + i * 8 + "]", "rax");
+            c.op("mul", "qword [q]");
+            c.op("add", r0, "rax");
+            c.op("adc", r1, "rdx");
+            c.op("adc", r2, "0x0");
         } else {
-            c.op("mov", "[rdi + " + (i - n64) * 8 + "]", r0)
-            c.op("xor", r0, r0)
+            c.op("mov", "[rdi + " + (i - n64) * 8 + "]", r0);
+            c.op("xor", r0, r0);
         }
     } // Main Loop
 
-    c.op("test", r1, r1)
-    c.code.push("jnz " +  fn + "_mulM_sq")
-    c.code.push("; Compare with q")
+    c.op("test", r1, r1);
+    c.code.push("jnz " +  fn + "_mulM_sq");
+    c.code.push("; Compare with q");
     for (let i=0; i < n64; i++) {
-        c.op("mov", "rax", "[rdi + " + (n64 - i - 1) * 8 + "]")
-        c.op("cmp", "rax", "[q + " + (n64 - i -1) * 8 + "]")
-        c.code.push("jc " + fn + "_mulM_done")          // q is bigget so done.
-        c.code.push("jnz " + fn + "_mulM_sq")           //  q is lower
+        c.op("mov", "rax", "[rdi + " + (n64 - i - 1) * 8 + "]");
+        c.op("cmp", "rax", "[q + " + (n64 - i -1) * 8 + "]");
+        c.code.push("jc " + fn + "_mulM_done") ;         // q is bigget so done.
+        c.code.push("jnz " + fn + "_mulM_sq");          //  q is lower
     }
 
     c.code.push("; If equal substract q")
@@ -391,18 +393,20 @@ function templateMontgomery_no_adx(fn, q, round) {
     c.code.push(fn + "_mulM_sq:");
 
     for (let i=0; i < n64; i++) {
-        c.op("mov", "rax", "[q + " + i * 8 + "]")
+        c.op("mov", "rax", "[q + " + i * 8 + "]");
         if (i == 0) {
-            c.op("sub", "[rdi + " + i * 8 + "]", "rax")
+            c.op("sub", "[rdi + " + i * 8 + "]", "rax");
         } else {
-            c.op("sbb", "[rdi + " + i * 8 + "]", "rax")
+            c.op("sbb", "[rdi + " + i * 8 + "]", "rax");
         }
     }
 
     c.code.push(fn + "_mulM_done:");
 
-    c.code.push("; Deallocate the reserved space on the stack")
-    c.op("mov", "rsp", "rbp")
+    c.code.push("; Deallocate the reserved space on the stack");
+    //c.op("mov", "rsp", "rbp")
+
+    c.op("add", "rsp", "" + n64 * 8); // Restore stack pointer to deallocate memory
 
     c.flushWr(true);
 
