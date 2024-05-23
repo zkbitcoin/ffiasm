@@ -106,7 +106,7 @@ sub_manageOverflow:                 ; Do the operation in 64 bits
 ;;;;;;;;;;;;;;;;;;;;;;
 ; sub
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts two elements of any kind
+; Subtracts two elements of any kind
 ; Params:
 ;   rsi <= Pointer to element 1
 ;   rdx <= Pointer to element 2
@@ -205,17 +205,17 @@ sub_l1ml2m:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubLS
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a short element from the long element
+; Subtracts a short element from the long element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to the long data of element 1 where will be substracted
-;   rdx <= Value to be substracted
+;   rsi <= Pointer to the long data of element 1 where will be subtracted
+;   rdx <= Value to be subtracted
 ;   [rdi] = [rsi] - rdx
 ; Modified Registers:
 ;    rax
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubLS:
-        ; Substract first digit
+        ; Subtract first digit
 
         mov rax, [rsi]
         sub rax, rdx
@@ -241,18 +241,18 @@ rawSubLS_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubSL
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element from a short element
+; Subtracts a long element from a short element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Value from where will bo substracted
-;   rdx <= Pointer to long of the value to be substracted
+;   rsi <= Value from where will bo subtracted
+;   rdx <= Pointer to long of the value to be subtracted
 ;
 ;   [rdi] = rsi - [rdx]
 ; Modified Registers:
 ;    rax
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubSL:
-        ; Substract first digit
+        ; Subtract first digit
         sub rsi, [rdx]
         mov [rdi] ,rsi
 
@@ -275,11 +275,11 @@ rawSubSL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubLL
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element from a short element
+; Subtracts a long element from a short element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to long from where substracted
-;   rdx <= Pointer to long of the value to be substracted
+;   rsi <= Pointer to long from where subtracted
+;   rdx <= Pointer to long of the value to be subtracted
 ;
 ;   [rdi] = [rsi] - [rdx]
 ; Modified Registers:
@@ -287,7 +287,7 @@ rawSubSL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubLL:
 <%=name%>_rawSub:
-        ; Substract first digit
+        ; Subtract first digit
 <% for (let i=0; i<n64; i++) { %>
         mov rax, [rsi + <%=i*8%>]
         <%= i==0 ? "sub" : "sbb" %> rax, [rdx + <%=i*8%>]
@@ -307,11 +307,11 @@ rawSubLL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawNegLS
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element and a short element form 0
+; Subtracts a long element and a short element form 0
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to long from where substracted
-;   rdx <= short value to be substracted too
+;   rsi <= Pointer to long from where subtracted
+;   rdx <= short value to be subtracted too
 ;
 ;   [rdi] = -[rsi] - rdx
 ; Modified Registers:

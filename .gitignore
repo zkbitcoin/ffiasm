@@ -70,5 +70,3 @@ tmp
 # bazel
 /bazel-*
 
-.idea
-.clwb

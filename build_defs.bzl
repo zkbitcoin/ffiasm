@@ -10,7 +10,7 @@ def generate_prime_field(
         generic_c_out = None,
         raw_generic_c_out = None,
         arm64_s_out = None,
-        no_adx = None):
+        no_adx = False):
     args = [
         "-q={}".format(modulus),
         "-n={}".format(name),
@@ -57,9 +57,8 @@ def generate_prime_field(
     else:
         arm64_s_out = name + "_raw_arm64.s"
 
-    if no_adx != None:
-        if no_adx == True:
-            args.append("--no_adx")
+    if no_adx:
+        args.append("--no_adx")
 
     js_run_binary(
         name = name,
