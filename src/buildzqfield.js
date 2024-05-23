@@ -51,7 +51,7 @@ class ZqBuilder {
 function is_adx_supported() {
 
     try {
-        data = fs.readFileSync('/proc/cpuinfo', 'utf8');
+        const data = fs.readFileSync('/proc/cpuinfo', 'utf8');
         const adxSupported = data.includes('adx');
         if (adxSupported) {
             return true;
@@ -65,7 +65,7 @@ function is_adx_supported() {
 
 async function buildField(q, name, no_adx, hpp_out, element_hpp_out) {
 
-    if (!no_adx) {
+    if (no_adx == null) {
         no_adx = !is_adx_supported();
     }
     const builder = new ZqBuilder(q, name, no_adx, hpp_out, element_hpp_out);
@@ -92,7 +92,7 @@ if (runningAsScript) {
     const q = bigInt(argv.q);
 
     const asmFileName =  (argv.oa) ? argv.oa : argv.name.toLowerCase() + ".asm";
-    const no_adx =  (argv.no_adx) ? argv.no_adx : false;
+    const no_adx =  (argv.no_adx) ? argv.no_adx : null;
     const hFileName =  (argv.oh) ? argv.oh : argv.name.toLowerCase() + ".hpp";
     const cFileName =  (argv.oc) ? argv.oc : argv.name.toLowerCase() + ".cpp";
     const hElementFileName =  (argv.oelemh) ? argv.oelemh : argv.name.toLowerCase() + "_element.hpp";
