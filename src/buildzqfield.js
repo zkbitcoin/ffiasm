@@ -10,6 +10,8 @@ const runningAsScript = !module.parent;
 const montgomeryBuilder = require("./montgomerybuilder");
 const armBuilder = require("./armbuilder");
 
+const fs = require("fs");
+
 class ZqBuilder {
     constructor(q, name, no_adx, hpp, element_hpp) {
         const self = this;
@@ -46,9 +48,27 @@ class ZqBuilder {
 
 }
 
-async function buildField(q, name, no_adx, hpp_out, element_hpp_out) {
-    const builder = new ZqBuilder(q, name, no_adx, hpp_out, element_hpp_out);
+function is_adx_supported() {
 
+    try {
+        data = fs.readFileSync('/proc/cpuinfo', 'utf8');
+        const adxSupported = data.includes('adx');
+        if (adxSupported) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        return false;
+    }
+}
+
+async function buildField(q, name, no_adx, hpp_out, element_hpp_out) {
+
+    if (!no_adx) {
+        no_adx = !is_adx_supported();
+    }
+    const builder = new ZqBuilder(q, name, no_adx, hpp_out, element_hpp_out);
     let asm = await renderFile(path.join(__dirname, "fr.asm.ejs"), builder, "{no_adx : " + no_adx + "}");
     const cpp = await renderFile(path.join(__dirname, "fr.cpp.ejs"), builder);
     const hpp = await renderFile(path.join(__dirname, "fr.hpp.ejs"), builder);
