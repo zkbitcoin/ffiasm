@@ -57,8 +57,9 @@ def generate_prime_field(
     else:
         arm64_s_out = name + "_raw_arm64.s"
 
-    if no_adx != None or no_adx == True:
-        args.append("--no_adx")
+    if no_adx != None:
+        if no_adx == True:
+            args.append("--no_adx")
 
     js_run_binary(
         name = name,
