@@ -9,7 +9,7 @@
         jc <%=done%>        ; q is bigget so done.
         jnz <%=subQ%>         ; q is lower
 <% } %>
-        ; If equal substract q
+        ; If equal subtract q
 <%=subQ%>:
 <% for (let i=0; i<n64; i++) { %>
         mov rax, [q + <%=i*8%>]
@@ -29,7 +29,7 @@
         jc <%=done%>        ; q is bigget so done.
         jnz <%=subQ%>         ; q is lower
 <%    } %>
-        ; If equal substract q
+        ; If equal subtract q
 <%=subQ%>:
 <%    for (let i=0; i<n64; i++) { %>
         mov rax, [q + <%=i*8%>]

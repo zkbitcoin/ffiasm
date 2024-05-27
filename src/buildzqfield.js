@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const bigInt=require("big-integer");
+const fs = require("fs");
 const path = require("path");
 const util = require("util");
 const renderFile = util.promisify(require("ejs").renderFile);
@@ -9,8 +10,6 @@ const runningAsScript = !module.parent;
 
 const montgomeryBuilder = require("./montgomerybuilder");
 const armBuilder = require("./armbuilder");
-
-const fs = require("fs");
 
 class ZqBuilder {
     constructor(q, name, no_adx, hpp, element_hpp) {
@@ -52,12 +51,7 @@ function is_adx_supported() {
 
     try {
         const data = fs.readFileSync('/proc/cpuinfo', 'utf8');
-        const adxSupported = data.includes('adx');
-        if (adxSupported) {
-            return true;
-        } else {
-            return false;
-        }
+        return data.includes('adx');
     } catch (err) {
         return false;
     }
@@ -65,9 +59,7 @@ function is_adx_supported() {
 
 async function buildField(q, name, no_adx, hpp_out, element_hpp_out) {
 
-    if (no_adx == null) {
-        no_adx = !is_adx_supported();
-    }
+    (no_adx == undefined) ? no_adx = !is_adx_supported() : no_adx = Boolean(no_adx.toLowerCase() === "true");
     const builder = new ZqBuilder(q, name, no_adx, hpp_out, element_hpp_out);
     let asm = await renderFile(path.join(__dirname, "fr.asm.ejs"), builder, "{no_adx : " + no_adx + "}");
     const cpp = await renderFile(path.join(__dirname, "fr.cpp.ejs"), builder);
@@ -81,9 +73,8 @@ async function buildField(q, name, no_adx, hpp_out, element_hpp_out) {
 }
 
 if (runningAsScript) {
-    const fs = require("fs");
     var argv = require("yargs")
-        .usage("Usage: $0 -q [primeNum] -n [name] -no_adx [no_adx] -oc [out .c file] -oh [out .h file] -oa [out .asm file]")
+        .usage("Usage: $0 -q [primeNum] -n [name] --no_adx [no_adx] --oc [out .c file] --oh [out .h file] --oa [out .asm file]")
         .demandOption(["q","n"])
         .alias("q", "prime")
         .alias("n", "name")
@@ -92,7 +83,7 @@ if (runningAsScript) {
     const q = bigInt(argv.q);
 
     const asmFileName =  (argv.oa) ? argv.oa : argv.name.toLowerCase() + ".asm";
-    const no_adx =  (argv.no_adx) ? argv.no_adx : null;
+    const no_adx =  (argv.no_adx) ? argv.no_adx : undefined;
     const hFileName =  (argv.oh) ? argv.oh : argv.name.toLowerCase() + ".hpp";
     const cFileName =  (argv.oc) ? argv.oc : argv.name.toLowerCase() + ".cpp";
     const hElementFileName =  (argv.oelemh) ? argv.oelemh : argv.name.toLowerCase() + "_element.hpp";

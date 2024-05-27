@@ -1317,7 +1317,7 @@ Fr_rawAdd:
         adc rax, [rdx + 24]
         mov [rdi + 24], rax
 
-        jc rawAddLL_sq   ; if overflow, substract q
+        jc rawAddLL_sq   ; if overflow, subtract q
 
         ; Compare with q
 
@@ -1347,7 +1347,7 @@ Fr_rawAdd:
         jc rawAddLL_done        ; q is bigget so done.
         jnz rawAddLL_sq         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 rawAddLL_sq:
 
         mov rax, [q + 0]
@@ -1393,7 +1393,7 @@ rawAddLS:
         adc rdx, [rsi + 24]
         mov [rdi + 24], rdx
 
-        jc rawAddLS_sq   ; if overflow, substract q
+        jc rawAddLS_sq   ; if overflow, subtract q
 
         ; Compare with q
 
@@ -1417,7 +1417,7 @@ rawAddLS:
         jc rawAddLS_done        ; q is bigget so done.
         jnz rawAddLS_sq         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 rawAddLS_sq:
 
         mov rax, [q + 0]
@@ -1452,7 +1452,7 @@ rawAddLS_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; sub
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts two elements of any kind
+; Subtracts two elements of any kind
 ; Params:
 ;   rsi <= Pointer to element 1
 ;   rdx <= Pointer to element 2
@@ -1710,17 +1710,17 @@ sub_l1ml2m:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubLS
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a short element from the long element
+; Subtracts a short element from the long element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to the long data of element 1 where will be substracted
-;   rdx <= Value to be substracted
+;   rsi <= Pointer to the long data of element 1 where will be subtracted
+;   rdx <= Value to be subtracted
 ;   [rdi] = [rsi] - rdx
 ; Modified Registers:
 ;    rax
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubLS:
-        ; Substract first digit
+        ; Subtract first digit
 
         mov rax, [rsi]
         sub rax, rdx
@@ -1763,18 +1763,18 @@ rawSubLS_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubSL
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element from a short element
+; Subtracts a long element from a short element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Value from where will bo substracted
-;   rdx <= Pointer to long of the value to be substracted
+;   rsi <= Value from where will bo subtracted
+;   rdx <= Pointer to long of the value to be subtracted
 ;
 ;   [rdi] = rsi - [rdx]
 ; Modified Registers:
 ;    rax
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubSL:
-        ; Substract first digit
+        ; Subtract first digit
         sub rsi, [rdx]
         mov [rdi] ,rsi
 
@@ -1814,11 +1814,11 @@ rawSubSL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawSubLL
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element from a short element
+; Subtracts a long element from a short element
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to long from where substracted
-;   rdx <= Pointer to long of the value to be substracted
+;   rsi <= Pointer to long from where subtracted
+;   rdx <= Pointer to long of the value to be subtracted
 ;
 ;   [rdi] = [rsi] - [rdx]
 ; Modified Registers:
@@ -1826,7 +1826,7 @@ rawSubSL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 rawSubLL:
 Fr_rawSub:
-        ; Substract first digit
+        ; Subtract first digit
 
         mov rax, [rsi + 0]
         sub rax, [rdx + 0]
@@ -1867,11 +1867,11 @@ rawSubLL_done:
 ;;;;;;;;;;;;;;;;;;;;;;
 ; rawNegLS
 ;;;;;;;;;;;;;;;;;;;;;;
-; Substracts a long element and a short element form 0
+; Subtracts a long element and a short element form 0
 ; Params:
 ;   rdi <= Pointer to the long data of result
-;   rsi <= Pointer to long from where substracted
-;   rdx <= short value to be substracted too
+;   rsi <= Pointer to long from where subtracted
+;   rdx <= short value to be subtracted too
 ;
 ;   [rdi] = -[rsi] - rdx
 ; Modified Registers:
@@ -2590,7 +2590,7 @@ tmp_13:
         jc tmp_15        ; q is bigget so done.
         jnz tmp_14         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_14:
 
         mov rax, [q + 0]
@@ -2677,7 +2677,7 @@ and_l1ns2:
         jc tmp_18        ; q is bigget so done.
         jnz tmp_17         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_17:
 
         mov rax, [q + 0]
@@ -2758,7 +2758,7 @@ tmp_16:
         jc tmp_20        ; q is bigget so done.
         jnz tmp_19         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_19:
 
         mov rax, [q + 0]
@@ -2844,7 +2844,7 @@ and_l1ms2:
         jc tmp_23        ; q is bigget so done.
         jnz tmp_22         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_22:
 
         mov rax, [q + 0]
@@ -2925,7 +2925,7 @@ tmp_21:
         jc tmp_25        ; q is bigget so done.
         jnz tmp_24         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_24:
 
         mov rax, [q + 0]
@@ -3006,7 +3006,7 @@ and_s1l2n:
         jc tmp_28        ; q is bigget so done.
         jnz tmp_27         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_27:
 
         mov rax, [q + 0]
@@ -3087,7 +3087,7 @@ tmp_26:
         jc tmp_30        ; q is bigget so done.
         jnz tmp_29         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_29:
 
         mov rax, [q + 0]
@@ -3171,7 +3171,7 @@ and_s1l2m:
         jc tmp_33        ; q is bigget so done.
         jnz tmp_32         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_32:
 
         mov rax, [q + 0]
@@ -3252,7 +3252,7 @@ tmp_31:
         jc tmp_35        ; q is bigget so done.
         jnz tmp_34         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_34:
 
         mov rax, [q + 0]
@@ -3334,7 +3334,7 @@ and_l1nl2n:
         jc tmp_37        ; q is bigget so done.
         jnz tmp_36         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_36:
 
         mov rax, [q + 0]
@@ -3413,7 +3413,7 @@ and_l1nl2m:
         jc tmp_39        ; q is bigget so done.
         jnz tmp_38         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_38:
 
         mov rax, [q + 0]
@@ -3497,7 +3497,7 @@ and_l1ml2n:
         jc tmp_41        ; q is bigget so done.
         jnz tmp_40         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_40:
 
         mov rax, [q + 0]
@@ -3583,7 +3583,7 @@ and_l1ml2m:
         jc tmp_43        ; q is bigget so done.
         jnz tmp_42         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_42:
 
         mov rax, [q + 0]
@@ -3707,7 +3707,7 @@ tmp_44:
         jc tmp_46        ; q is bigget so done.
         jnz tmp_45         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_45:
 
         mov rax, [q + 0]
@@ -3794,7 +3794,7 @@ or_l1ns2:
         jc tmp_49        ; q is bigget so done.
         jnz tmp_48         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_48:
 
         mov rax, [q + 0]
@@ -3875,7 +3875,7 @@ tmp_47:
         jc tmp_51        ; q is bigget so done.
         jnz tmp_50         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_50:
 
         mov rax, [q + 0]
@@ -3961,7 +3961,7 @@ or_l1ms2:
         jc tmp_54        ; q is bigget so done.
         jnz tmp_53         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_53:
 
         mov rax, [q + 0]
@@ -4042,7 +4042,7 @@ tmp_52:
         jc tmp_56        ; q is bigget so done.
         jnz tmp_55         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_55:
 
         mov rax, [q + 0]
@@ -4123,7 +4123,7 @@ or_s1l2n:
         jc tmp_59        ; q is bigget so done.
         jnz tmp_58         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_58:
 
         mov rax, [q + 0]
@@ -4204,7 +4204,7 @@ tmp_57:
         jc tmp_61        ; q is bigget so done.
         jnz tmp_60         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_60:
 
         mov rax, [q + 0]
@@ -4288,7 +4288,7 @@ or_s1l2m:
         jc tmp_64        ; q is bigget so done.
         jnz tmp_63         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_63:
 
         mov rax, [q + 0]
@@ -4369,7 +4369,7 @@ tmp_62:
         jc tmp_66        ; q is bigget so done.
         jnz tmp_65         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_65:
 
         mov rax, [q + 0]
@@ -4451,7 +4451,7 @@ or_l1nl2n:
         jc tmp_68        ; q is bigget so done.
         jnz tmp_67         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_67:
 
         mov rax, [q + 0]
@@ -4530,7 +4530,7 @@ or_l1nl2m:
         jc tmp_70        ; q is bigget so done.
         jnz tmp_69         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_69:
 
         mov rax, [q + 0]
@@ -4614,7 +4614,7 @@ or_l1ml2n:
         jc tmp_72        ; q is bigget so done.
         jnz tmp_71         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_71:
 
         mov rax, [q + 0]
@@ -4700,7 +4700,7 @@ or_l1ml2m:
         jc tmp_74        ; q is bigget so done.
         jnz tmp_73         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_73:
 
         mov rax, [q + 0]
@@ -4824,7 +4824,7 @@ tmp_75:
         jc tmp_77        ; q is bigget so done.
         jnz tmp_76         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_76:
 
         mov rax, [q + 0]
@@ -4911,7 +4911,7 @@ xor_l1ns2:
         jc tmp_80        ; q is bigget so done.
         jnz tmp_79         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_79:
 
         mov rax, [q + 0]
@@ -4992,7 +4992,7 @@ tmp_78:
         jc tmp_82        ; q is bigget so done.
         jnz tmp_81         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_81:
 
         mov rax, [q + 0]
@@ -5078,7 +5078,7 @@ xor_l1ms2:
         jc tmp_85        ; q is bigget so done.
         jnz tmp_84         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_84:
 
         mov rax, [q + 0]
@@ -5159,7 +5159,7 @@ tmp_83:
         jc tmp_87        ; q is bigget so done.
         jnz tmp_86         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_86:
 
         mov rax, [q + 0]
@@ -5240,7 +5240,7 @@ xor_s1l2n:
         jc tmp_90        ; q is bigget so done.
         jnz tmp_89         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_89:
 
         mov rax, [q + 0]
@@ -5321,7 +5321,7 @@ tmp_88:
         jc tmp_92        ; q is bigget so done.
         jnz tmp_91         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_91:
 
         mov rax, [q + 0]
@@ -5405,7 +5405,7 @@ xor_s1l2m:
         jc tmp_95        ; q is bigget so done.
         jnz tmp_94         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_94:
 
         mov rax, [q + 0]
@@ -5486,7 +5486,7 @@ tmp_93:
         jc tmp_97        ; q is bigget so done.
         jnz tmp_96         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_96:
 
         mov rax, [q + 0]
@@ -5568,7 +5568,7 @@ xor_l1nl2n:
         jc tmp_99        ; q is bigget so done.
         jnz tmp_98         ; q is lower
 
-        ; If equal substract q
+        ; If equal subtract q
 tmp_98:
 
         mov rax, [q + 0]

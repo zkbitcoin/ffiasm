@@ -313,8 +313,6 @@ function buildFromMontgomery(fn, q) {
     });
 }
 
-// no adx assembler
-
 function templateMontgomery_no_adx(fn, q, round) {
 
     const n64 = Math.floor((q.bitLength() - 1) / 64)+1;
@@ -342,20 +340,18 @@ function templateMontgomery_no_adx(fn, q, round) {
         }
     }
 
-    //c.op("mov", "rbp", "rsp")
-
     c.op("sub","rsp", "" + n64 * 8);
-
     c.op("mov","rcx","rdx");
     c.op("mov","r11", "[ np ]");
     c.op("xor","r8","r8");
     c.op("xor","r9","r9");
     c.op("xor","r10","r10");
+    
     // Main loop
     for (let i=0; i < n64 * 2; i++) {
         setR(i);
         round(c, params, i, r0, r1, r2);
-        for (let j = i - 1; j >= 0; j--) { // All ms
+        for (let j = i - 1; j >= 0; j--) {
             if (((i - j) < n64) && (j < n64)) {
                 c.op("mov", "rax", "[rsp + " + j * 8 + "]");
                 c.op("mul", "qword [q + " + (i - j) * 8 + "]");
@@ -363,7 +359,7 @@ function templateMontgomery_no_adx(fn, q, round) {
                 c.op("adc", r1, "rdx");
                 c.op("adc", r2, "0x0");
             }
-        } // ms
+        }
         if (i < n64) {
             c.op("mov", "rax", r0);
             c.op("mul", "r11");
@@ -388,7 +384,7 @@ function templateMontgomery_no_adx(fn, q, round) {
         c.code.push("jnz " + fn + "_mulM_sq");          //  q is lower
     }
 
-    c.code.push("; If equal substract q")
+    c.code.push("; If equal subtract q")
 
     c.code.push(fn + "_mulM_sq:");
 
@@ -404,7 +400,6 @@ function templateMontgomery_no_adx(fn, q, round) {
     c.code.push(fn + "_mulM_done:");
 
     c.code.push("; Deallocate the reserved space on the stack");
-    //c.op("mov", "rsp", "rbp")
 
     c.op("add", "rsp", "" + n64 * 8); // Restore stack pointer to deallocate memory
 
@@ -416,7 +411,7 @@ function templateMontgomery_no_adx(fn, q, round) {
 
 function buildMul_no_adx(fn, q) {
     return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
-        const {t, n64, canOptimizeConsensys} = params;
+        const {n64} = params;
         // Same Digit
         for (let o1 = Math.max(0, i - n64+1); (o1 <= i) && (o1 < n64); o1++) {
             const o2= i-o1;
@@ -431,7 +426,7 @@ function buildMul_no_adx(fn, q) {
 
 function buildSquare_no_adx(fn, q) {
     return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
-        const {t, n64, canOptimizeConsensys} = params;
+        const {n64} = params;
         // Same Digit
         for (let o1 = Math.max(0, i - n64 +1); (o1 < ((i+1) >> 1) ) && (o1 < n64); o1++) {
             const o2= i-o1;
@@ -456,7 +451,7 @@ function buildSquare_no_adx(fn, q) {
 
 function buildFromMontgomery_no_adx(fn, q) {
     return templateMontgomery_no_adx(fn, q, function(c, params, i, r0, r1, r2) {
-        const {t, n64, canOptimizeConsensys} = params;
+        const {n64} = params;
         // Same Digit
         if (i<n64) {
             c.op("add", r0, "[rsi + " + 8 * i + "]")

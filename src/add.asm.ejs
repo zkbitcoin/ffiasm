@@ -215,7 +215,7 @@ rawAddLL:
         <%= i==0 ? "add" : "adc" %> rax, [rdx + <%=i*8%>]
         mov [rdi + <%=i*8%>], rax
 <% } %>
-        jc rawAddLL_sq   ; if overflow, substract q
+        jc rawAddLL_sq   ; if overflow, subtract q
 
         ; Compare with q
 <% for (let i=0; i<n64; i++) { %>
@@ -226,7 +226,7 @@ rawAddLL:
         jc rawAddLL_done        ; q is bigget so done.
         jnz rawAddLL_sq         ; q is lower
 <% } %>
-        ; If equal substract q
+        ; If equal subtract q
 rawAddLL_sq:
 <% for (let i=0; i<n64; i++) { %>
         mov rax, [q + <%=i*8%>]
@@ -255,7 +255,7 @@ rawAddLS:
         adc rdx, [rsi + <%=i*8%>]
         mov [rdi + <%=i*8%>], rdx
 <% } %>
-        jc rawAddLS_sq   ; if overflow, substract q
+        jc rawAddLS_sq   ; if overflow, subtract q
 
         ; Compare with q
 <% for (let i=0; i<n64; i++) { %>
@@ -264,7 +264,7 @@ rawAddLS:
         jc rawAddLS_done        ; q is bigget so done.
         jnz rawAddLS_sq         ; q is lower
 <% } %>
-        ; If equal substract q
+        ; If equal subtract q
 rawAddLS_sq:
 <% for (let i=0; i<n64; i++) { %>
         mov rax, [q + <%=i*8%>]

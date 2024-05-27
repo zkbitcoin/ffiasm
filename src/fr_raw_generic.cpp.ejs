@@ -78,7 +78,7 @@ void <%=name%>_rawNeg(<%=name%>RawElement pRawResult, const <%=name%>RawElement 
     }
 }
 
-//  Substracts a long element and a short element form 0
+//  Subtracts a long element and a short element form 0
 void <%=name%>_rawNegLS(<%=name%>RawElement pRawResult, <%=name%>RawElement pRawA, uint64_t rawB)
 {
     uint64_t carry1 = mpn_sub_1(reinterpret_cast<mp_ptr>(pRawResult), reinterpret_cast<mp_srcptr>(<%=name%>_rawq), <%=name%>_N64, rawB);
